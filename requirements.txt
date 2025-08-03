@@ -1,5 +1,5 @@
 ultralytics==8.0.196
-streamlit
 opencv-python
+streamlit
 numpy
 Pillow
