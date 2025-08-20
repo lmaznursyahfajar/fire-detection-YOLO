@@ -1,5 +1,7 @@
-ultralytics==8.0.196
-opencv-python-headless==4.8.0.76
 streamlit
+opencv-python
 numpy
-Pillow
+pandas
+matplotlib
+pygame
+
