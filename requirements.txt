@@ -1,12 +1,12 @@
 streamlit
 ultralytics
-opencv-python-headless
 numpy
 pandas
 matplotlib
 pygame
 Pillow
-opencv-python
+
+
 
 
 
