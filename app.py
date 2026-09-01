@@ -176,7 +176,7 @@ elif nav == "Deteksi":
                     # Inference (gunakan conf & iou agar lebih hemat pasca-filter)
                     results = model(image, conf=conf_th, iou=iou_th)
                     frames, total_fire, avg_conf = draw_fire_only(results, min_conf=conf_th)
-                    st.image(frames[0], caption="Hasil Deteksi Api", use_container_width=True)
+                    st.image(frames[0], caption="Hasil Deteksi Api", use_column_width=True)
 
                     # Metrics (cards di samping sudah ada; tampilkan ringkas di bawah untuk gambar)
                     m1, m2 = st.columns(2)
@@ -226,7 +226,7 @@ elif nav == "Deteksi":
 
                     results = model(frame, conf=conf_th, iou=iou_th)
                     frames, total_fire, avg_conf = draw_fire_only(results, min_conf=conf_th)
-                    frame_view.image(frames[0], channels="BGR", use_container_width=True)
+                    frame_view.image(frames[0], channels="BGR", use_column_width=True)
 
                     if total_fire > 0:
                         det_count += total_fire
@@ -267,7 +267,7 @@ elif nav == "Deteksi":
 
                     results = model(frame, conf=conf_th, iou=iou_th)
                     frames, total_fire, avg_conf = draw_fire_only(results, min_conf=conf_th)
-                    frame_view.image(frames[0], channels="BGR", use_container_width=True)
+                    frame_view.image(frames[0], channels="BGR", use_column_width=True)
 
                     if total_fire > 0:
                         det_total += total_fire
