@@ -248,45 +248,43 @@ elif nav == "Deteksi":
                     })
                     st.success("Proses video selesai / dihentikan.")
 
-        # ========== WEBCAM ==========
+# ========== WEBCAM (LOKAL VIA OPENCV) ==========
         elif source_type == "📹 Webcam":
             device_index = st.number_input("Index Kamera", min_value=0, value=0, step=1)
-            cap = cv2.VideoCapture(int(device_index))
-            if not cap.isOpened():
-                st.error("Kamera tidak dapat dibuka. Coba index lain.")
-            else:
-                frame_view = st.empty()
-                run_cam = st.checkbox("Mulai Webcam", value=False)
-                det_total, conf_acc = 0, []
-
-                while run_cam and cap.isOpened():
-                    ret, frame = cap.read()
-                    if not ret:
-                        st.warning("Frame tidak terbaca.")
-                        break
-
-                    results = model(frame, conf=conf_th, iou=iou_th)
-                    frames, total_fire, avg_conf = draw_fire_only(results, min_conf=conf_th)
-                    frame_view.image(frames[0], channels="BGR", use_container_width=True)
-
-                    if total_fire > 0:
-                        det_total += total_fire
-                        if avg_conf > 0:
-                            conf_acc.append(avg_conf)
-                        play_alarm(loop=True)
-
-                cap.release()
-
-                if det_total >= 0:
-                    avg_conf_overall = float(np.mean(conf_acc)) if conf_acc else 0.0
-                    st.session_state.logs.append({
-                        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                        "source": "Webcam",
-                        "detections": int(det_total),
-                        "avg_conf": avg_conf_overall,
-                        "note": f"device_index={device_index}",
-                    })
-                    st.info("Webcam dihentikan.")
+            run_cam = st.checkbox("Mulai Webcam", value=False)
+            frame_view = st.empty()
+            
+            if run_cam:
+                # Buka kamera hanya jika checkbox dicentang
+                cap = cv2.VideoCapture(int(device_index))
+                
+                if not cap.isOpened():
+                    st.error("Kamera tidak dapat dibuka. Pastikan kamera tidak sedang dipakai aplikasi lain.")
+                else:
+                    det_total, conf_acc = 0, []
+                    
+                    while run_cam:
+                        ret, frame = cap.read()
+                        if not ret:
+                            st.warning("Gagal membaca frame kamera.")
+                            break
+                            
+                        # Proses deteksi
+                        results = model(frame, conf=conf_th, iou=iou_th)
+                        frames, total_fire, avg_conf = draw_fire_only(results, min_conf=conf_th)
+                        
+                        # OpenCV membaca BGR, Streamlit butuh RGB
+                        frame_rgb = cv2.cvtColor(frames[0], cv2.COLOR_BGR2RGB)
+                        frame_view.image(frame_rgb, use_container_width=True)
+                        
+                        if total_fire > 0:
+                            det_total += total_fire
+                            if avg_conf > 0:
+                                conf_acc.append(avg_conf)
+                            play_alarm(loop=True)
+                            
+                    # Pastikan kamera dilepas ketika loop berhenti
+                    cap.release()
 
 # ================== HISTORY / EXPORT PAGE ==================
 elif nav == "Riwayat & Ekspor":
